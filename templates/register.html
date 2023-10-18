@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="log-content">
+<div class="container py-5">
+    <div class="row align-items-center py-5">
+<h1>Register</h1>
+    <form method="post" action="{% url 'register' %}">
+        {% csrf_token %}
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required><br>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required><br>
+        <label for="cpassword">Confirm Password:</label>
+        <input type="password" id="cpassword" name="cpassword" required><br>
+        <input type="submit" value="Register">
+        </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

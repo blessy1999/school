@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="log-content">
+    <div class="container py-5">
+        <div class="row align-items-center py-5">
+            <p>Welcome to our school store <button id="Button"><a href="{% url 'logout' %}">Logout</a></button></p>
+            <button id="myButton">To Order The Items Click Me</button>
+            <form method="post" action="{% url 'home' %}" id="myForm" style="display: none;">
+        {% csrf_token %}
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required><br>
+
+                <label for="dob">Date of Birth:</label>
+                <input type="date" id="dob" name="dob" required><br>
+
+                <label for="age">Age:</label>
+                <input type="number" id="age" name="age" required><br>
+
+                <label for="gender">Gender:</label>
+                <input type="radio" id="male" name="gender" value="male" required>
+                <label for="male">Male</label>
+                <input type="radio" id="female" name="gender" value="female" required>
+                <label for="female">Female</label><br>
+
+                <label for="phone">Phone Number:</label>
+                <input type="tel" id="phone" name="phone" required><br>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required><br>
+
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" required></textarea><br>
+
+                <label for="department">Department:</label>
+                <select id="department" name="department" required>
+                    <option value="computer_science">select department</option>
+                     {% for department in departments %}
+        <option value="{{ department.id }}">{{ department.name }}</option>
+    {% endfor %}
+                </select><br>
+
+                <label for="course">Course:</label>
+                <select id="course" name="course" required>
+                    {% for course in courses %}
+        <option value="{{ course.id }}">{{ course.name }}</option>
+    {% endfor %}
+                </select><br>
+
+                <label for="purpose">Purpose:</label>
+                <select id="purpose" name="purpose" required>
+                    <option value="enquiry">Enquiry</option>
+                    <option value="place_order">Place Order</option>
+                    <option value="return">Return</option>
+                    <!-- Add more purpose options -->
+                </select><br>
+
+                <label>Materials Provide:</label>
+                <input type="checkbox" id="notebook" name="materials" value="notebook">
+                <label for="notebook">Notebook</label>
+                <input type="checkbox" id="pen" name="materials" value="pen">
+                <label for="pen">Pen</label>
+                <input type="checkbox" id="exam_papers" name="materials" value="exam_papers">
+                <label for="exam_papers">Paper</label>
+                <!-- Add more materials options -->
+
+                <br>
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const showFormButton = document.getElementById("myButton");
+    const myForm = document.getElementById("myForm");
+
+    showFormButton.addEventListener("click", function () {
+        if (myForm.style.display === "none" || myForm.style.display === "") {
+            myForm.style.display = "block";
+        } else {
+            myForm.style.display = "none";
+        }
+    });
+</script>
+<script>
+    const departmentDropdown = document.getElementById("department");
+    const courseDropdown = document.getElementById("course");
+
+    // Define a JavaScript object to store course data based on departments
+    const courseData = {
+        {% for department in departments %}
+            "{{ department.id }}": [
+                {% for course in department.course_set.all %}
+                    {
+                        "id": {{ course.id }},
+                        "name": "{{ course.name }}"
+                    },
+                {% endfor %}
+            ],
+        {% endfor %}
+    };
+
+    // Function to populate the course dropdown based on the selected department
+    function updateCourseOptions() {
+        const selectedDepartment = departmentDropdown.value;
+        courseDropdown.innerHTML = "<option value=''>Select Course</option>";
+        if (courseData[selectedDepartment]) {
+            courseData[selectedDepartment].forEach(function (course) {
+                const option = document.createElement("option");
+                option.value = course.id;  // Set the course id as the value
+                option.text = course.name;  // Display the course name
+                courseDropdown.appendChild(option);
+            });
+        }
+    }
+
+    // Add an event listener to the department dropdown
+    departmentDropdown.addEventListener("change", updateCourseOptions);
+
+    // Initially populate the course options
+    updateCourseOptions();
+</script>
+
+
+{% endblock %}
